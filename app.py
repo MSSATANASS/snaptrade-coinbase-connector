@@ -326,6 +326,18 @@ def render_home(message: Optional[Tuple[str, str]] = None) -> str:
         + "</tbody></table></div>"
     )
 
+    # Check if credentials are set
+    client_id = os.getenv("SNAPTRADE_CLIENT_ID", "").strip()
+    consumer_key = os.getenv("SNAPTRADE_CONSUMER_KEY", "").strip()
+    creds_status = ""
+    if not client_id or not consumer_key:
+        creds_status = (
+            "<div class='mb-6 p-4 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-300 text-sm'>"
+            "<strong>CRITICAL:</strong> SnapTrade API keys are NOT configured in Environment Variables. "
+            "Please add SNAPTRADE_CLIENT_ID and SNAPTRADE_CONSUMER_KEY to your Render dashboard."
+            "</div>"
+        )
+
     content = f"""
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
       <div>
@@ -336,6 +348,7 @@ def render_home(message: Optional[Tuple[str, str]] = None) -> str:
         <strong>Note:</strong> On SnapTrade's free tier, you can typically only register 1 user via Personal Keys.
       </div>
     </div>
+    {creds_status}
     {msg_html}
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       <div class="lg:col-span-7 glass-card rounded-xl p-6">
@@ -385,6 +398,7 @@ def render_home(message: Optional[Tuple[str, str]] = None) -> str:
 
 
 @app.get("/", response_class=HTMLResponse)
+@app.head("/", response_class=HTMLResponse)
 def home(request: Request) -> HTMLResponse:
     return HTMLResponse(render_home())
 
