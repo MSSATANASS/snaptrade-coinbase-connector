@@ -266,7 +266,8 @@ def html_page(title: str, content: str) -> str:
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{title}}</title>
+    <title>{title}</title>
+    <link rel="icon" href="data:," />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -291,6 +292,16 @@ def html_page(title: str, content: str) -> str:
 @app.get("/health")
 def health() -> Dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return JSONResponse(status_code=204, content={})
+
+
+@app.get("/@vite/client", include_in_schema=False)
+def vite_client_stub():
+    return JSONResponse(status_code=204, content={})
 
 
 def render_home(message: Optional[Tuple[str, str]] = None) -> str:
